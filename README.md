@@ -69,41 +69,6 @@ The system processes task dependency graphs for smart city operations:
 
 ---
 
-## Project Structure
-
-```
-Smart-city-dag-scheduler/
-├── pom.xml                          # Maven build configuration
-├── README.md                        # This file
-├── data/                            # 9 test datasets (JSON)
-│   ├── small_1.json                 # 6 nodes, pure DAG
-│   ├── small_2.json                 # 8 nodes, 1 SCC
-│   ├── small_3.json                 # 7 nodes, 2 SCCs
-│   ├── medium_1.json                # 12 nodes, sparse DAG
-│   ├── medium_2.json                # 15 nodes, 3 SCCs
-│   ├── medium_3.json                # 18 nodes, dense DAG
-│   ├── large_1.json                 # 25 nodes, sparse DAG
-│   ├── large_2.json                 # 30 nodes, 5 SCCs
-│   └── large_3.json                 # 40 nodes, dense DAG
-└── src/
-    ├── main/java/graph/
-    │   ├── metrics/
-    │   │   └── Metrics.java         # Performance tracking
-    │   ├── model/
-    │   │   └── Graph.java           # Graph data structure + JSON loader
-    │   ├── scc/
-    │   │   ├── TarjanSCC.java       # SCC detection
-    │   │   └── CondensationGraph.java # DAG compression
-    │   ├── topo/
-    │   │   └── TopologicalSort.java # DFS & Kahn's algorithms
-    │   └── dagsp/
-    │       └── DAGShortestPath.java # Shortest/longest paths
-    └── test/java/graph/
-        └── GraphAlgorithmsTest.java # JUnit 5 test suite
-```
-
----
-
 ## Installation & Build
 
 ### Prerequisites
