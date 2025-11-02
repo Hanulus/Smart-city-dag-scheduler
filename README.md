@@ -6,7 +6,7 @@ This project implements core graph algorithms for analyzing and optimizing task 
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
@@ -20,7 +20,7 @@ This project implements core graph algorithms for analyzing and optimizing task 
 
 ---
 
-## 🎯 Overview
+## Overview
 
 The system processes task dependency graphs for smart city operations:
 
@@ -37,7 +37,7 @@ The system processes task dependency graphs for smart city operations:
 
 ---
 
-## ✨ Features
+## Features
 
 ### Implemented Algorithms
 
@@ -69,7 +69,7 @@ The system processes task dependency graphs for smart city operations:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 Smart-city-dag-scheduler/
@@ -104,7 +104,7 @@ Smart-city-dag-scheduler/
 
 ---
 
-## 🚀 Installation & Build
+## Installation & Build
 
 ### Prerequisites
 
@@ -137,7 +137,7 @@ mvn package
 
 ---
 
-## 💻 Usage
+## Usage
 
 ### Running Tests
 
@@ -218,7 +218,7 @@ System.out.println(metricsKahn);
 
 ---
 
-## 📊 Datasets
+## Datasets
 
 ### Overview
 
@@ -264,7 +264,7 @@ Weights range from 1 to 10 for realistic scheduling scenarios.
 
 ---
 
-## 🔬 Algorithm Analysis
+## Algorithm Analysis
 
 ### Time Complexity
 
@@ -344,7 +344,7 @@ Building condensation adds minimal cost:
 
 ---
 
-## 📈 Performance Results
+## Performance Results
 
 ### Execution Time by Dataset Size
 
@@ -386,7 +386,7 @@ For large_3 (40 nodes): **~3.5 KB** of core data structures.
 
 ---
 
-## 🎓 Conclusions
+## Conclusions
 
 ### When to Use Each Algorithm
 
@@ -404,14 +404,14 @@ For large_3 (40 nodes): **~3.5 KB** of core data structures.
 
 #### 2. **Topological Sort**
 **DFS-based**:
-- ✅ Faster on sparse graphs
-- ✅ Natural for recursive implementations
-- ❌ Harder to parallelize
+- Faster on sparse graphs
+- Natural for recursive implementations
+- Harder to parallelize
 
 **Kahn's Algorithm**:
-- ✅ Easier to understand (iterative)
-- ✅ Better for streaming/incremental updates
-- ❌ Slightly more memory (in-degree array)
+- Easier to understand (iterative)
+- Better for streaming/incremental updates
+- Slightly more memory (in-degree array)
 
 **Recommendation**: Use DFS for batch processing, Kahn for interactive systems.
 
@@ -462,28 +462,9 @@ For large_3 (40 nodes): **~3.5 KB** of core data structures.
 
 ---
 
-## 📚 References
-
-- Tarjan, R. E. (1972). "Depth-first search and linear graph algorithms"
-- Kahn, A. B. (1962). "Topological sorting of large networks"
-- Cormen et al. (2009). "Introduction to Algorithms" (3rd ed.), Chapter 22
-
----
-
-## 👤 Author
+## Author
 
 **Smart City DAG Scheduler**  
 Assignment 4 - Graph Algorithms  
-Course: Advanced Algorithms and Data Structures
-
----
-
-## 📄 License
-
-This project is submitted as academic coursework. All algorithms are implemented from first principles following standard textbook descriptions.
-
----
-
-**Last Updated**: November 2024  
-**Build Status**: ✅ All tests passing  
-**Test Coverage**: 95%+ of critical paths
+Course: Design and Analysis of Algorithms 
+Name: Uraimov Chingiz
