@@ -362,8 +362,6 @@ Building condensation adds minimal cost:
 
 ### Scaling Analysis
 
-![Performance Scaling](https://via.placeholder.com/800x400?text=Time+vs+Graph+Size)
-
 **Key Findings**:
 
 1. **Near-linear scaling**: Doubling vertices/edges increases time by ~2x
