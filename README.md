@@ -1,4 +1,4 @@
-# Smart City DAG Scheduler
+# Smart City DAG Scheduler 
 
 **Assignment 4**: Graph Algorithms for Smart City Task Scheduling
 
