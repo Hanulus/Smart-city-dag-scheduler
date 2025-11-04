@@ -1,108 +1,178 @@
-package graph.model;
+package graph;
 
+import graph.dagsp.DAGShortestPath;
+import graph.model.Graph;
+import graph.metrics.Metrics;
+import graph.scc.CondensationGraph;
+import graph.scc.TarjanSCC;
+import graph.topo.TopologicalSort;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
- * Unit tests for Graph data structure.
+ * Test suite for all graph algorithms.
  */
-public class GraphTest {
+public class GraphAlgorithmsTest {
+    
+    // ===== SCC Tests =====
     
     @Test
-    public void testGraphCreation() {
-        Graph graph = new Graph(5, true, "edge");
+    public void testSimpleDAG() {
+        Graph g = new Graph(3, "edge");
+        g.addEdge(0, 1, 1);
+        g.addEdge(1, 2, 1);
         
-        assertEquals(5, graph.getVertexCount());
-        assertEquals(0, graph.getEdgeCount());
-        assertTrue(graph.isDirected());
-        assertEquals("edge", graph.getWeightModel());
+        TarjanSCC tarjan = new TarjanSCC(g, new Metrics());
+        List<List<Integer>> sccs = tarjan.findSCCs();
+        
+        assertEquals(3, sccs.size()); // Each vertex is its own SCC
     }
     
     @Test
-    public void testAddEdge() {
-        Graph graph = new Graph(3, true, "edge");
-        graph.addEdge(0, 1, 5);
-        graph.addEdge(1, 2, 3);
+    public void testSingleCycle() {
+        Graph g = new Graph(3, "edge");
+        g.addEdge(0, 1, 1);
+        g.addEdge(1, 2, 1);
+        g.addEdge(2, 0, 1);
         
-        assertEquals(2, graph.getEdgeCount());
+        TarjanSCC tarjan = new TarjanSCC(g, new Metrics());
+        List<List<Integer>> sccs = tarjan.findSCCs();
         
-        List<Edge> neighbors0 = graph.getNeighbors(0);
-        assertEquals(1, neighbors0.size());
-        assertEquals(1, neighbors0.get(0).to);
-        assertEquals(5, neighbors0.get(0).weight);
+        assertEquals(1, sccs.size());
+        assertEquals(3, sccs.get(0).size());
     }
     
     @Test
-    public void testReverseGraph() {
-        Graph graph = new Graph(3, true, "edge");
-        graph.addEdge(0, 1, 5);
+    public void testMultipleSCCs() {
+        Graph g = new Graph(4, "edge");
+        g.addEdge(0, 1, 1);
+        g.addEdge(1, 0, 1);
+        g.addEdge(2, 3, 1);
+        g.addEdge(3, 2, 1);
         
-        List<Edge> reverseNeighbors = graph.getReverseNeighbors(1);
-        assertEquals(1, reverseNeighbors.size());
-        assertEquals(0, reverseNeighbors.get(0).to);
+        TarjanSCC tarjan = new TarjanSCC(g, new Metrics());
+        List<List<Integer>> sccs = tarjan.findSCCs();
+        
+        assertEquals(2, sccs.size());
+    }
+    
+    // ===== Condensation Tests =====
+    
+    @Test
+    public void testCondensationDAG() {
+        Graph g = new Graph(4, "edge");
+        g.addEdge(0, 1, 1);
+        g.addEdge(1, 0, 1);
+        g.addEdge(1, 2, 1);
+        g.addEdge(2, 3, 1);
+        
+        TarjanSCC tarjan = new TarjanSCC(g, new Metrics());
+        List<List<Integer>> sccs = tarjan.findSCCs();
+        
+        CondensationGraph cond = new CondensationGraph(g, sccs);
+        Graph condensation = cond.getGraph();
+        
+        assertTrue(condensation.getVertexCount() < g.getVertexCount());
+        assertTrue(condensation.getEdgeCount() > 0);
+    }
+    
+    // ===== Topological Sort Tests =====
+    
+    @Test
+    public void testTopoSortDFS() {
+        Graph g = new Graph(4, "edge");
+        g.addEdge(0, 1, 1);
+        g.addEdge(0, 2, 1);
+        g.addEdge(1, 3, 1);
+        g.addEdge(2, 3, 1);
+        
+        TopologicalSort topo = new TopologicalSort(g, new Metrics());
+        List<Integer> order = topo.sortDFS();
+        
+        assertEquals(4, order.size());
+        assertTrue(order.indexOf(0) < order.indexOf(1));
+        assertTrue(order.indexOf(0) < order.indexOf(2));
+        assertTrue(order.indexOf(1) < order.indexOf(3));
+        assertTrue(order.indexOf(2) < order.indexOf(3));
     }
     
     @Test
-    public void testUndirectedGraph() {
-        Graph graph = new Graph(3, false, "edge");
-        graph.addEdge(0, 1, 5);
+    public void testTopoSortKahn() {
+        Graph g = new Graph(3, "edge");
+        g.addEdge(0, 1, 1);
+        g.addEdge(1, 2, 1);
         
-        // In undirected graph, edge should exist in both directions
-        assertEquals(1, graph.getNeighbors(0).size());
-        assertEquals(1, graph.getNeighbors(1).size());
+        TopologicalSort topo = new TopologicalSort(g, new Metrics());
+        List<Integer> order = topo.sortKahn();
         
-        // Edge count should be 1 (not 2) for undirected
-        assertEquals(1, graph.getEdgeCount());
+        assertEquals(3, order.size());
+        assertTrue(order.indexOf(0) < order.indexOf(1));
+        assertTrue(order.indexOf(1) < order.indexOf(2));
     }
     
     @Test
-    public void testInvalidVertex() {
-        Graph graph = new Graph(3, true, "edge");
+    public void testCycleDetection() {
+        Graph g = new Graph(3, "edge");
+        g.addEdge(0, 1, 1);
+        g.addEdge(1, 2, 1);
+        g.addEdge(2, 0, 1);
         
-        assertThrows(IllegalArgumentException.class, () -> {
-            graph.addEdge(-1, 1, 5);
-        });
+        TopologicalSort topo = new TopologicalSort(g, new Metrics());
+        List<Integer> order = topo.sortKahn();
         
-        assertThrows(IllegalArgumentException.class, () -> {
-            graph.addEdge(0, 5, 5);
-        });
+        assertTrue(order.isEmpty()); // Cycle detected
+    }
+    
+    // ===== DAG Shortest Path Tests =====
+    
+    @Test
+    public void testShortestPath() {
+        Graph g = new Graph(4, "edge");
+        g.addEdge(0, 1, 1);
+        g.addEdge(0, 2, 4);
+        g.addEdge(1, 3, 2);
+        g.addEdge(2, 3, 1);
+        
+        DAGShortestPath sp = new DAGShortestPath(g, new Metrics());
+        int[] dist = sp.shortestPaths(0);
+        
+        assertEquals(0, dist[0]);
+        assertEquals(1, dist[1]);
+        assertEquals(4, dist[2]);
+        assertEquals(3, dist[3]); // via 0->1->3
     }
     
     @Test
-    public void testGetAllVertices() {
-        Graph graph = new Graph(4, true, "edge");
-        List<Integer> vertices = graph.getAllVertices();
+    public void testCriticalPath() {
+        Graph g = new Graph(5, "edge");
+        g.addEdge(0, 1, 3);
+        g.addEdge(0, 2, 2);
+        g.addEdge(1, 3, 4);
+        g.addEdge(2, 3, 1);
+        g.addEdge(3, 4, 2);
         
-        assertEquals(4, vertices.size());
-        assertTrue(vertices.contains(0));
-        assertTrue(vertices.contains(1));
-        assertTrue(vertices.contains(2));
-        assertTrue(vertices.contains(3));
+        DAGShortestPath cp = new DAGShortestPath(g, new Metrics());
+        DAGShortestPath.PathResult result = cp.criticalPath();
+        
+        assertEquals(9, result.pathLength); // 0->1->3->4
+        assertFalse(result.path.isEmpty());
     }
     
     @Test
-    public void testEmptyGraph() {
-        Graph graph = new Graph(3, true, "edge");
+    public void testSingleVertex() {
+        Graph g = new Graph(1, "edge");
         
-        assertEquals(3, graph.getVertexCount());
-        assertEquals(0, graph.getEdgeCount());
+        TarjanSCC tarjan = new TarjanSCC(g, new Metrics());
+        assertEquals(1, tarjan.findSCCs().size());
         
-        for (int v = 0; v < 3; v++) {
-            assertTrue(graph.getNeighbors(v).isEmpty());
-        }
-    }
-    
-    @Test
-    public void testToString() {
-        Graph graph = new Graph(3, true, "edge");
-        graph.addEdge(0, 1, 5);
-        graph.addEdge(1, 2, 3);
+        TopologicalSort topo = new TopologicalSort(g, new Metrics());
+        assertEquals(1, topo.sortDFS().size());
         
-        String str = graph.toString();
-        assertTrue(str.contains("Graph"));
-        assertTrue(str.contains("n=3"));
-        assertTrue(str.contains("edges=2"));
+        DAGShortestPath sp = new DAGShortestPath(g, new Metrics());
+        int[] dist = sp.shortestPaths(0);
+        assertEquals(0, dist[0]);
     }
 }
