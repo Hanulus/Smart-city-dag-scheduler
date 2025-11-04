@@ -54,4 +54,4 @@ public class CondensationGraph {
         return "Condensation: " + condensation.getVertexCount() + " nodes, " + 
                condensation.getEdgeCount() + " edges";
     }
-}
+} 
