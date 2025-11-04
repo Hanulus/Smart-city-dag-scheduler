@@ -1,61 +1,42 @@
 package graph.metrics;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Interface for collecting performance metrics during graph algorithm execution.
+ * Performance metrics collector.
  * Tracks operation counts and execution time.
  */
-public interface Metrics {
+public class Metrics {
+    private final Map<String, Long> counters = new HashMap<>();
+    private long startTime;
+    private long endTime;
     
-    /**
-     * Records the start time of algorithm execution.
-     */
-    void startTimer();
+    public void startTimer() {
+        startTime = System.nanoTime();
+    }
     
-    /**
-     * Records the end time of algorithm execution.
-     */
-    void stopTimer();
+    public void stopTimer() {
+        endTime = System.nanoTime();
+    }
     
-    /**
-     * Returns the elapsed time in nanoseconds.
-     */
-    long getElapsedTimeNanos();
+    public void increment(String counter) {
+        counters.put(counter, counters.getOrDefault(counter, 0L) + 1);
+    }
     
-    /**
-     * Returns the elapsed time in milliseconds.
-     */
-    double getElapsedTimeMillis();
+    public long get(String counter) {
+        return counters.getOrDefault(counter, 0L);
+    }
     
-    /**
-     * Increments a counter by the given name.
-     * 
-     * @param counterName name of the counter (e.g., "dfs_visits", "edge_relaxations")
-     */
-    void incrementCounter(String counterName);
+    public double getTimeMs() {
+        return (endTime - startTime) / 1_000_000.0;
+    }
     
-    /**
-     * Increments a counter by a specific amount.
-     * 
-     * @param counterName name of the counter
-     * @param amount amount to increment
-     */
-    void incrementCounter(String counterName, long amount);
-    
-    /**
-     * Gets the current value of a counter.
-     * 
-     * @param counterName name of the counter
-     * @return counter value, or 0 if not found
-     */
-    long getCounter(String counterName);
-    
-    /**
-     * Resets all metrics (counters and timer).
-     */
-    void reset();
-    
-    /**
-     * Returns a string representation of all metrics.
-     */
-    String getSummary();
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Metrics:\n");
+        sb.append(String.format("  Time: %.3f ms\n", getTimeMs()));
+        counters.forEach((k, v) -> sb.append(String.format("  %s: %d\n", k, v)));
+        return sb.toString();
+    }
 }
